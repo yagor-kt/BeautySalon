@@ -1,11 +1,9 @@
-package com.example.beautysalon.data.dao
+package com.example.beautysalon.data
 
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
-import com.example.beautysalon.data.MasterCount
-import com.example.beautysalon.data.ServiceCount
 import com.example.beautysalon.data.entity.Appointment
 import kotlinx.coroutines.flow.Flow
 
@@ -19,6 +17,16 @@ interface AppointmentDao {
         """
     )
     fun getByDate(start: Long, end: Long): Flow<List<Appointment>>
+
+    @Query(
+        """
+        SELECT * FROM appointments
+        WHERE masterName = :masterName AND dateTime >= :after
+        ORDER BY dateTime ASC
+        LIMIT 3
+        """
+    )
+    fun getUpcomingByMaster(masterName: String, after: Long): Flow<List<Appointment>>
 
     @Query(
         """

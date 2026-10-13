@@ -1,8 +1,5 @@
-package com.example.beautysalon.data.repository
+package com.example.beautysalon.data
 
-import com.example.beautysalon.data.MasterCount
-import com.example.beautysalon.data.ServiceCount
-import com.example.beautysalon.data.dao.AppointmentDao
 import com.example.beautysalon.data.entity.Appointment
 import kotlinx.coroutines.flow.Flow
 
@@ -11,6 +8,9 @@ class AppointmentRepository(
 ) {
     fun getByDate(start: Long, end: Long): Flow<List<Appointment>> =
         appointmentDao.getByDate(start, end)
+
+    fun getUpcomingByMaster(masterName: String, after: Long): Flow<List<Appointment>> =
+        appointmentDao.getUpcomingByMaster(masterName, after)
 
     fun getHistory(): Flow<List<Appointment>> =
         appointmentDao.getHistory()

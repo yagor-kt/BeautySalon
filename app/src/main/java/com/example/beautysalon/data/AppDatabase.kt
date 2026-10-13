@@ -5,7 +5,6 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.example.beautysalon.data.dao.AppointmentDao
 import com.example.beautysalon.data.dao.MasterDao
 import com.example.beautysalon.data.dao.ServiceDao
 import com.example.beautysalon.data.entity.Appointment
