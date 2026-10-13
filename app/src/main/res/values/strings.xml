@@ -87,4 +87,8 @@
     <string name="content_description_close">Закрыть</string>
     <string name="content_description_rating">Оценка %1$d из 5</string>
     <string name="screen_coming_soon">Экран будет доступен на следующем шаге</string>
+    <string name="empty_masters">Мастеров нет</string>
+    <string name="empty_services">Услуг нет</string>
+    <string name="add_master">Добавить мастера</string>
+    <string name="analytics_cancellation_count">%1$d (%2$d%%)</string>
 </resources>
