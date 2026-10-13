@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">Салон красоты</string>
-
     <string name="salon_title">Салон красоты</string>
     <string name="login_title">Вход для администратора</string>
     <string name="login_label">Логин</string>
@@ -39,6 +38,7 @@
     <string name="cancel">Отмена</string>
     <string name="invalid_time">Введите время в формате ЧЧ:ММ</string>
     <string name="add_appointment">Добавить запись</string>
+    <string name="empty_appointments">Записей нет</string>
 
     <string name="status_pending">Ожидает</string>
     <string name="status_done">Выполнено</string>
@@ -86,4 +86,5 @@
     <string name="content_description_add">Добавить</string>
     <string name="content_description_close">Закрыть</string>
     <string name="content_description_rating">Оценка %1$d из 5</string>
+    <string name="screen_coming_soon">Экран будет доступен на следующем шаге</string>
 </resources>
