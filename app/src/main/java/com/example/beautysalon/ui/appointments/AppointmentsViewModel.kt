@@ -3,8 +3,8 @@ package com.example.beautysalon.ui.appointments
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.example.beautysalon.data.AppointmentRepository
 import com.example.beautysalon.data.repository.ServiceRepository
-import com.example.beautysalon.data.repository.AppointmentRepository
 import com.example.beautysalon.data.repository.MasterRepository
 import com.example.beautysalon.data.entity.Appointment
 import com.example.beautysalon.data.entity.Master

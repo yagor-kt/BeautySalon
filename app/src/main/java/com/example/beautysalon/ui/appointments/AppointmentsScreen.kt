@@ -12,10 +12,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FloatingActionButton
@@ -27,24 +29,22 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.Button
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.beautysalon.R
 import com.example.beautysalon.data.entity.Appointment
-import com.example.beautysalon.data.repository.AppointmentRepository
+import com.example.beautysalon.data.AppointmentRepository
 import com.example.beautysalon.data.entity.Master
 import com.example.beautysalon.data.repository.MasterRepository
 import com.example.beautysalon.data.entity.Service
@@ -70,9 +70,10 @@ fun AppointmentsScreen(
             serviceRepository
         )
     )
-    val state by viewModel.state.collectAsStateWithLifecycle()
+    val state by viewModel.state.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
 
     var showCreateSheet by remember { mutableStateOf(false) }
     var selectedAppointment by remember { mutableStateOf<Appointment?>(null) }
@@ -99,7 +100,6 @@ fun AppointmentsScreen(
                 style = MaterialTheme.typography.headlineMedium
             )
             Spacer(modifier = Modifier.height(12.dp))
-
             LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 item {
                     FilterChip(
@@ -116,12 +116,15 @@ fun AppointmentsScreen(
                     )
                 }
             }
-
             Spacer(modifier = Modifier.height(12.dp))
+
             if (state.appointments.isEmpty()) {
                 Text(text = stringResource(R.string.empty_appointments))
             } else {
-                LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                LazyColumn(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
                     items(state.appointments, key = { it.id }) { appointment ->
                         SalonCard(
                             modifier = Modifier.clickable {
@@ -149,20 +152,20 @@ fun AppointmentsScreen(
     }
 
     if (showCreateSheet) {
-        val invalidTimeMessage = stringResource(R.string.invalid_time)
         ModalBottomSheet(onDismissRequest = { showCreateSheet = false }) {
             CreateAppointmentSheet(
                 services = state.services,
                 masters = state.masters,
                 onCreate = { client, service, master, time ->
-                    viewModel.createAppointment(client, service, master, time) {
+                    val parsed = DateUtils.parseTimeToToday(time)
+                    if (parsed == null) {
                         scope.launch {
                             snackbarHostState.showSnackbar(
-                                invalidTimeMessage
+                                context.getString(R.string.invalid_time)
                             )
                         }
-                    }
-                    if (DateUtils.parseTimeToToday(time) != null) {
+                    } else {
+                        viewModel.createAppointment(client, service, master, time) {}
                         showCreateSheet = false
                     }
                 }
@@ -346,7 +349,9 @@ private fun CreateAppointmentSheet(
                 }
             },
             modifier = Modifier.fillMaxWidth(),
-            enabled = clientName.isNotBlank() && selectedService != null && selectedMaster != null
+            enabled = clientName.isNotBlank() &&
+                    selectedService != null &&
+                    selectedMaster != null
         ) {
             Text(stringResource(R.string.create_appointment))
         }

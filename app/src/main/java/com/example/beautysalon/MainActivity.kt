@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import com.example.beautysalon.data.AppDatabase
-import com.example.beautysalon.data.repository.AppointmentRepository
+import com.example.beautysalon.data.AppointmentRepository
 import com.example.beautysalon.data.repository.MasterRepository
 import com.example.beautysalon.data.repository.ServiceRepository
 import com.example.beautysalon.ui.navigation.NavGraph

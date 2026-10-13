@@ -18,16 +18,16 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.beautysalon.R
-import com.example.beautysalon.data.repository.AppointmentRepository
+import com.example.beautysalon.data.AppointmentRepository
 import com.example.beautysalon.data.repository.MasterRepository
 import com.example.beautysalon.ui.components.LoadBar
 import com.example.beautysalon.ui.components.SalonCard
@@ -47,34 +47,15 @@ fun DashboardScreen(
     appointmentRepository: AppointmentRepository
 ) {
     val viewModel: DashboardViewModel = viewModel(
-        factory = DashboardViewModel.Factory(
-            masterRepository,
-            appointmentRepository
-        )
+        factory = DashboardViewModel.Factory(masterRepository, appointmentRepository)
     )
-    val state by viewModel.state.collectAsStateWithLifecycle()
+    val state by viewModel.state.collectAsState()
 
     val destinations = listOf(
-        DashboardDestination(
-            R.string.nav_appointments,
-            Icons.Default.CalendarMonth,
-            Screen.Appointments
-        ),
-        DashboardDestination(
-            R.string.nav_masters,
-            Icons.Default.Spa,
-            Screen.Masters
-        ),
-        DashboardDestination(
-            R.string.nav_services,
-            Icons.Default.ContentCut,
-            Screen.Services
-        ),
-        DashboardDestination(
-            R.string.nav_history,
-            Icons.Default.History,
-            Screen.History
-        )
+        DashboardDestination(R.string.nav_appointments, Icons.Default.CalendarMonth, Screen.Appointments),
+        DashboardDestination(R.string.nav_masters, Icons.Default.Spa, Screen.Masters),
+        DashboardDestination(R.string.nav_services, Icons.Default.ContentCut, Screen.Services),
+        DashboardDestination(R.string.nav_history, Icons.Default.History, Screen.History)
     )
 
     Column(
@@ -97,10 +78,7 @@ fun DashboardScreen(
         }
 
         SalonCard {
-            Text(
-                text = stringResource(R.string.today),
-                style = MaterialTheme.typography.titleMedium
-            )
+            Text(text = stringResource(R.string.today), style = MaterialTheme.typography.titleMedium)
             Text(text = stringResource(R.string.appointments_count, state.appointmentsCount))
             Text(text = stringResource(R.string.completed_count, state.completedCount))
             Text(text = stringResource(R.string.cancelled_count, state.cancelledCount))
@@ -111,7 +89,6 @@ fun DashboardScreen(
                 text = stringResource(R.string.nearest_appointment),
                 style = MaterialTheme.typography.titleMedium
             )
-
             val appointment = state.nearestAppointment
             if (appointment == null) {
                 Text(text = stringResource(R.string.no_appointments_today))
@@ -128,17 +105,10 @@ fun DashboardScreen(
                 text = stringResource(R.string.master_load),
                 style = MaterialTheme.typography.titleMedium
             )
-
             state.masterLoads.forEach { item ->
                 Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                    Text(
-                        text = item.master.name,
-                        style = MaterialTheme.typography.bodyLarge
-                    )
-                    LoadBar(
-                        loaded = item.loaded,
-                        total = item.master.dailySlots
-                    )
+                    Text(text = item.master.name, style = MaterialTheme.typography.bodyLarge)
+                    LoadBar(loaded = item.loaded, total = item.master.dailySlots)
                 }
             }
         }
@@ -147,46 +117,34 @@ fun DashboardScreen(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            DashboardDestinationCard(
-                destination = destinations[0],
-                modifier = Modifier.weight(1f),
-                onClick = { navController.navigate(destinations[0].route) }
-            )
-            DashboardDestinationCard(
-                destination = destinations[1],
-                modifier = Modifier.weight(1f),
-                onClick = { navController.navigate(destinations[1].route) }
-            )
+            DestinationCard(destinations[0], Modifier.weight(1f)) {
+                navController.navigate(destinations[0].route)
+            }
+            DestinationCard(destinations[1], Modifier.weight(1f)) {
+                navController.navigate(destinations[1].route)
+            }
         }
-
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            DashboardDestinationCard(
-                destination = destinations[2],
-                modifier = Modifier.weight(1f),
-                onClick = { navController.navigate(destinations[2].route) }
-            )
-            DashboardDestinationCard(
-                destination = destinations[3],
-                modifier = Modifier.weight(1f),
-                onClick = { navController.navigate(destinations[3].route) }
-            )
+            DestinationCard(destinations[2], Modifier.weight(1f)) {
+                navController.navigate(destinations[2].route)
+            }
+            DestinationCard(destinations[3], Modifier.weight(1f)) {
+                navController.navigate(destinations[3].route)
+            }
         }
     }
 }
 
 @Composable
-private fun DashboardDestinationCard(
+private fun DestinationCard(
     destination: DashboardDestination,
-    modifier: Modifier = Modifier,
+    modifier: Modifier,
     onClick: () -> Unit
 ) {
-    Card(
-        onClick = onClick,
-        modifier = modifier
-    ) {
+    Card(onClick = onClick, modifier = modifier) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
