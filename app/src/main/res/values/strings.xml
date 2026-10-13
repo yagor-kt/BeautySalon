@@ -1,3 +1,89 @@
 <resources>
-    <string name="app_name">BeautySalon</string>
+    <string name="app_name">Салон красоты</string>
+
+    <string name="salon_title">Салон красоты</string>
+    <string name="login_title">Вход для администратора</string>
+    <string name="login_label">Логин</string>
+    <string name="password_label">Пароль</string>
+    <string name="login_button">Войти</string>
+    <string name="login_error">Неверный логин или пароль</string>
+
+    <string name="good_day">Добрый день</string>
+    <string name="today">Сегодня</string>
+    <string name="appointments_count">Записей: %1$d</string>
+    <string name="completed_count">Выполнено: %1$d</string>
+    <string name="cancelled_count">Отменено: %1$d</string>
+    <string name="nearest_appointment">Ближайшая запись</string>
+    <string name="no_appointments_today">На сегодня записей нет</string>
+    <string name="master_load">Загрузка мастеров</string>
+    <string name="load_count">%1$d из %2$d</string>
+
+    <string name="nav_appointments">Записи</string>
+    <string name="nav_masters">Мастера</string>
+    <string name="nav_services">Услуги</string>
+    <string name="nav_history">История</string>
+    <string name="all_masters">Все</string>
+
+    <string name="client_name">Имя клиента</string>
+    <string name="service">Услуга</string>
+    <string name="master">Мастер</string>
+    <string name="time">Время</string>
+    <string name="time_hint">15:00</string>
+    <string name="create_appointment">Создать</string>
+    <string name="appointment_details">Детали записи</string>
+    <string name="mark_done">Выполнено</string>
+    <string name="cancel_appointment">Отменить</string>
+    <string name="delete_appointment">Удалить запись</string>
+    <string name="delete_appointment_confirmation">Удалить эту запись?</string>
+    <string name="delete">Удалить</string>
+    <string name="cancel">Отмена</string>
+    <string name="invalid_time">Введите время в формате ЧЧ:ММ</string>
+    <string name="add_appointment">Добавить запись</string>
+
+    <string name="status_pending">Ожидает</string>
+    <string name="status_done">Выполнено</string>
+    <string name="status_cancelled">Отменено</string>
+
+    <string name="specialization">Специализация</string>
+    <string name="experience_years">%1$d лет стажа</string>
+    <string name="rating">Рейтинг</string>
+    <string name="description">Описание</string>
+    <string name="upcoming_appointments">Ближайшие записи</string>
+    <string name="no_upcoming_appointments">Ближайших записей нет</string>
+    <string name="master_details">Информация о мастере</string>
+    <string name="master_photo">Фото мастера</string>
+
+    <string name="duration_minutes">%1$d мин</string>
+    <string name="price_rubles">%1$s</string>
+    <string name="add_service">Добавить услугу</string>
+    <string name="service_title">Название услуги</string>
+    <string name="category">Категория</string>
+    <string name="duration">Длительность, мин</string>
+    <string name="price">Цена, ₽</string>
+    <string name="add">Добавить</string>
+    <string name="delete_service_title">Удалить услугу?</string>
+    <string name="delete_service_confirmation">Услуга будет удалена без возможности восстановления.</string>
+    <string name="category_manicure">Маникюр</string>
+    <string name="category_hairdressing">Парикмахерские</string>
+    <string name="category_cosmetology">Косметология</string>
+    <string name="category_massage">Массаж</string>
+
+    <string name="tab_history">История</string>
+    <string name="tab_analytics">Аналитика</string>
+    <string name="monthly_revenue">Выручка за месяц</string>
+    <string name="weekly_revenue">Выручка за неделю</string>
+    <string name="top_services">Топ-3 услуги</string>
+    <string name="top_masters">Топ-3 мастера</string>
+    <string name="cancellations_month">Отмены за месяц</string>
+    <string name="cancelled_percentage">%1$d (%2$d%%)</string>
+    <string name="service_count">%1$s — %2$d</string>
+    <string name="master_count">%1$s — %2$d</string>
+    <string name="no_data">Нет данных</string>
+
+    <string name="unknown_service">Услуга не выбрана</string>
+    <string name="unknown_master">Мастер не выбран</string>
+    <string name="content_description_back">Назад</string>
+    <string name="content_description_add">Добавить</string>
+    <string name="content_description_close">Закрыть</string>
+    <string name="content_description_rating">Оценка %1$d из 5</string>
 </resources>
