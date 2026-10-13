@@ -3,45 +3,30 @@ package com.example.beautysalon
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import com.example.beautysalon.data.AppDatabase
+import com.example.beautysalon.data.repository.AppointmentRepository
+import com.example.beautysalon.data.repository.MasterRepository
+import com.example.beautysalon.data.repository.ServiceRepository
+import com.example.beautysalon.ui.navigation.NavGraph
 import com.example.beautysalon.ui.theme.BeautySalonTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+
+        val database = AppDatabase.getInstance(applicationContext)
+        val masterRepository = MasterRepository(database.masterDao())
+        val serviceRepository = ServiceRepository(database.serviceDao())
+        val appointmentRepository = AppointmentRepository(database.appointmentDao())
+
         setContent {
             BeautySalonTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+                NavGraph(
+                    masterRepository = masterRepository,
+                    serviceRepository = serviceRepository,
+                    appointmentRepository = appointmentRepository
+                )
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    BeautySalonTheme {
-        Greeting("Android")
     }
 }
