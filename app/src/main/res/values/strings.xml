@@ -28,6 +28,9 @@
     <string name="master">Мастер</string>
     <string name="time">Время</string>
     <string name="time_hint">15:00</string>
+    <string name="appointment_date">Дата</string>
+    <string name="date_hint">ДД.ММ.ГГГГ</string>
+    <string name="invalid_date_time">Проверьте дату и время. Форматы: ДД.ММ.ГГГГ и ЧЧ:ММ</string>
     <string name="create_appointment">Создать</string>
     <string name="appointment_details">Детали записи</string>
     <string name="mark_done">Выполнено</string>

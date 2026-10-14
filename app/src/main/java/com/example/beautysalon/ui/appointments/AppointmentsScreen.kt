@@ -100,6 +100,7 @@ fun AppointmentsScreen(
                 style = MaterialTheme.typography.headlineMedium
             )
             Spacer(modifier = Modifier.height(12.dp))
+
             LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 item {
                     FilterChip(
@@ -116,6 +117,7 @@ fun AppointmentsScreen(
                     )
                 }
             }
+
             Spacer(modifier = Modifier.height(12.dp))
 
             if (state.appointments.isEmpty()) {
@@ -152,21 +154,28 @@ fun AppointmentsScreen(
     }
 
     if (showCreateSheet) {
+        val invalidDateTime = stringResource(R.string.invalid_date_time)
         ModalBottomSheet(onDismissRequest = { showCreateSheet = false }) {
             CreateAppointmentSheet(
                 services = state.services,
                 masters = state.masters,
-                onCreate = { client, service, master, time ->
-                    val parsed = DateUtils.parseTimeToToday(time)
-                    if (parsed == null) {
+                onCreate = { client, service, master, date, time ->
+                    val created = viewModel.createAppointment(
+                        clientName = client,
+                        service = service,
+                        master = master,
+                        date = date,
+                        time = time
+                    )
+
+                    if (created) {
+                        showCreateSheet = false
+                    } else {
                         scope.launch {
                             snackbarHostState.showSnackbar(
-                                context.getString(R.string.invalid_time)
+                                invalidDateTime
                             )
                         }
-                    } else {
-                        viewModel.createAppointment(client, service, master, time) {}
-                        showCreateSheet = false
                     }
                 }
             )
@@ -175,6 +184,7 @@ fun AppointmentsScreen(
 
     selectedAppointment?.let { appointment ->
         var confirmDelete by remember(appointment.id) { mutableStateOf(false) }
+
         ModalBottomSheet(onDismissRequest = { selectedAppointment = null }) {
             Column(
                 modifier = Modifier
@@ -256,10 +266,13 @@ fun AppointmentsScreen(
 private fun CreateAppointmentSheet(
     services: List<Service>,
     masters: List<Master>,
-    onCreate: (String, Service, Master, String) -> Unit
+    onCreate: (String, Service, Master, String, String) -> Unit
 ) {
     var clientName by remember { mutableStateOf("") }
     var time by remember { mutableStateOf("") }
+    var date by remember {
+        mutableStateOf(DateUtils.formatDate(System.currentTimeMillis()))
+    }
     var selectedService by remember { mutableStateOf<Service?>(null) }
     var selectedMaster by remember { mutableStateOf<Master?>(null) }
     var serviceMenuExpanded by remember { mutableStateOf(false) }
@@ -275,6 +288,7 @@ private fun CreateAppointmentSheet(
             text = stringResource(R.string.add_appointment),
             style = MaterialTheme.typography.titleLarge
         )
+
         OutlinedTextField(
             value = clientName,
             onValueChange = { clientName = it },
@@ -340,12 +354,25 @@ private fun CreateAppointmentSheet(
             singleLine = true
         )
 
+        OutlinedTextField(
+            value = date,
+            onValueChange = { date = it },
+            label = { Text(stringResource(R.string.appointment_date)) },
+            placeholder = { Text(stringResource(R.string.date_hint)) },
+            modifier = Modifier.fillMaxWidth(),
+            singleLine = true
+        )
+
         Button(
             onClick = {
                 val service = selectedService
                 val master = selectedMaster
-                if (clientName.isNotBlank() && service != null && master != null) {
-                    onCreate(clientName, service, master, time)
+                if (
+                    clientName.isNotBlank() &&
+                    service != null &&
+                    master != null
+                ) {
+                    onCreate(clientName, service, master, date, time)
                 }
             },
             modifier = Modifier.fillMaxWidth(),
@@ -355,6 +382,7 @@ private fun CreateAppointmentSheet(
         ) {
             Text(stringResource(R.string.create_appointment))
         }
+
         Spacer(modifier = Modifier.height(16.dp))
     }
 }

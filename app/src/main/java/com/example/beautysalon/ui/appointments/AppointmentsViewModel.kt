@@ -3,12 +3,12 @@ package com.example.beautysalon.ui.appointments
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.example.beautysalon.data.AppointmentRepository
-import com.example.beautysalon.data.repository.ServiceRepository
-import com.example.beautysalon.data.repository.MasterRepository
 import com.example.beautysalon.data.entity.Appointment
+import com.example.beautysalon.data.AppointmentRepository
 import com.example.beautysalon.data.entity.Master
+import com.example.beautysalon.data.repository.MasterRepository
 import com.example.beautysalon.data.entity.Service
+import com.example.beautysalon.data.repository.ServiceRepository
 import com.example.beautysalon.util.DateUtils
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -39,40 +39,44 @@ class AppointmentsViewModel(
         selectedMaster
     ) { appointments, masters, services, filter ->
         AppointmentsUiState(
-            appointments = if (filter == null) appointments else appointments.filter {
-                it.masterName == filter
+            appointments = if (filter == null) {
+                appointments
+            } else {
+                appointments.filter { it.masterName == filter }
             },
             masters = masters,
             services = services,
             selectedMaster = filter
         )
     }.stateIn(
-        viewModelScope,
-        SharingStarted.WhileSubscribed(5_000),
-        AppointmentsUiState()
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = AppointmentsUiState()
     )
 
     fun selectMaster(name: String?) {
         selectedMaster.value = name
     }
 
+    /**
+     * Возвращает false, если дата или время не прошли строгую проверку.
+     * Запись создаётся только после успешного разбора даты и времени.
+     */
     fun createAppointment(
         clientName: String,
         service: Service,
         master: Master,
-        time: String,
-        onInvalidTime: () -> Unit
-    ) {
-        val dateTime = DateUtils.parseTimeToToday(time)
-        if (dateTime == null) {
-            onInvalidTime()
-            return
-        }
+        date: String,
+        time: String
+    ): Boolean {
+        val dateTime = DateUtils.parseDateTime(date, time) ?: return false
+        val normalizedClientName = clientName.trim()
+        if (normalizedClientName.isEmpty()) return false
 
         viewModelScope.launch {
             appointmentRepository.insert(
                 Appointment(
-                    clientName = clientName.trim(),
+                    clientName = normalizedClientName,
                     masterName = master.name,
                     serviceTitle = service.title,
                     price = service.price,
@@ -81,10 +85,13 @@ class AppointmentsViewModel(
                 )
             )
         }
+        return true
     }
 
     fun updateStatus(appointment: Appointment, status: String) {
         if (appointment.status != "PENDING") return
+        if (status != "DONE" && status != "CANCELLED") return
+
         viewModelScope.launch {
             appointmentRepository.updateStatus(appointment.id, status)
         }

@@ -56,21 +56,54 @@ object DateUtils {
     fun monthName(millis: Long): String {
         val month = SimpleDateFormat("LLLL yyyy", russianLocale).format(Date(millis))
         return month.replaceFirstChar { character ->
-            if (character.isLowerCase()) character.titlecase(russianLocale) else character.toString()
+            if (character.isLowerCase()) {
+                character.titlecase(russianLocale)
+            } else {
+                character.toString()
+            }
         }
     }
 
-    fun parseTimeToToday(hhmm: String): Long? {
-        val match = Regex("""^(\d{2}):(\d{2})$""").matchEntire(hhmm) ?: return null
-        val hour = match.groupValues[1].toIntOrNull() ?: return null
-        val minute = match.groupValues[2].toIntOrNull() ?: return null
+    /**
+     * Строго разбирает дату ДД.ММ.ГГГГ и время ЧЧ:ММ
+     * в локальном часовом поясе. Возвращает null при любом
+     * формате или значении, не соответствующем календарю.
+     */
+    fun parseDateTime(date: String, time: String): Long? {
+        val dateMatch = Regex("""^(\d{2})\.(\d{2})\.(\d{4})$""")
+            .matchEntire(date.trim())
+            ?: return null
+
+        val timeMatch = Regex("""^(\d{2}):(\d{2})$""")
+            .matchEntire(time.trim())
+            ?: return null
+
+        val day = dateMatch.groupValues[1].toIntOrNull() ?: return null
+        val month = dateMatch.groupValues[2].toIntOrNull() ?: return null
+        val year = dateMatch.groupValues[3].toIntOrNull() ?: return null
+        val hour = timeMatch.groupValues[1].toIntOrNull() ?: return null
+        val minute = timeMatch.groupValues[2].toIntOrNull() ?: return null
+
+        if (year < 1 || month !in 1..12 || day !in 1..31) return null
         if (hour !in 0..23 || minute !in 0..59) return null
 
-        return Calendar.getInstance().apply {
-            set(Calendar.HOUR_OF_DAY, hour)
-            set(Calendar.MINUTE, minute)
-            set(Calendar.SECOND, 0)
-            set(Calendar.MILLISECOND, 0)
-        }.timeInMillis
+        return try {
+            Calendar.getInstance().apply {
+                isLenient = false
+                clear()
+                set(Calendar.YEAR, year)
+                set(Calendar.MONTH, month - 1)
+                set(Calendar.DAY_OF_MONTH, day)
+                set(Calendar.HOUR_OF_DAY, hour)
+                set(Calendar.MINUTE, minute)
+                set(Calendar.SECOND, 0)
+                set(Calendar.MILLISECOND, 0)
+            }.timeInMillis
+        } catch (_: IllegalArgumentException) {
+            null
+        }
     }
+
+    fun parseTimeToToday(hhmm: String): Long? =
+        parseDateTime(formatDate(System.currentTimeMillis()), hhmm)
 }
